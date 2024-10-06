@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة السعرات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            direction: rtl;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+            text-align: right;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .author {
+            color: blue;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            display: inline-block;
+            width: 40%;
+        }
+        input, select {
+            width: 50%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        button#calculate {
+            background-color: #28a745;
+            color: white;
+        }
+        button#calculate:hover {
+            background-color: #218838;
+        }
+        button#reset {
+            background-color: #dc3545;
+            color: white;
+        }
+        button#reset:hover {
+            background-color: #c82333;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .notes {
+            color: darkred;
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: right;
+        }
+        .notes u {
+            font-weight: bold;
+        }
+        .table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>حاسبة السعرات</h1>
+        <div class="author">(إعداد حسام الحديدي)</div>
+
+        <label for="gender">الجنس:</label>
+        <select id="gender" onchange="toggleHipMeasurement()">
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+        </select><br>
+
+        <label for="weight">الوزن (بالكيلوغرام):</label>
+        <input type="number" id="weight" placeholder="أدخل وزنك بالكيلوغرام"><br>
+
+        <label for="calorie_deficit">عجز السعرات الحرارية:</label>
+        <input type="number" id="calorie_deficit" placeholder="أدخل العجز (لانقاص الوزن)"><br>
+
+        <label for="waist">محيط الخصر (سم):</label>
+        <input type="number" id="waist" placeholder="أدخل محيط خصرك"><br>
+
+        <label for="neck">محيط الرقبة (سم):</label>
+        <input type="number" id="neck" placeholder="أدخل محيط رقبتك"><br>
+
+        <label for="height">الطول (سم):</label>
+        <input type="number" id="height" placeholder="أدخل طولك"><br>
+
+        <div id="hipMeasurementContainer" style="display: none;">
+            <label for="hip">محيط المؤخرة (سم):</label>
+            <input type="number" id="hip" placeholder="أدخل محيط مؤخراتك"><br>
+        </div>
+
+        <div class="buttons">
+            <button id="calculate" onclick="calculateCalories()">احسب</button>
+            <button id="reset" onclick="resetForm()">تصفير الحسابات</button>
+        </div>
+
+        <div class="result" id="result">
+            <p>السعرات المطلوبة للحفاظ على الوزن: <span id="maintenanceCalories"></span> سعرة حرارية</p>
+            <p>محصلة السعرات بعد العجز: <span id="netCalories"></span> سعرة حرارية</p>
+            <p>احتياجك للكربوهيدرات: <span id="carbs"></span> غرام</p>
+            <p>احتياجك للبروتينات: <span id="proteins"></span> غرام</p>
+            <p>احتياجك للدهون: <span id="fats"></span> غرام</p>
+            <p>نسبة الدهون في جسمك: <span id="bodyFatPercentage"></span>%</p>
+        </div>
+
+        <div class="notes">
+            <u>ملاحظات:</u>
+          <br>
+            - اذا اردت نزول صحي اكتب العجز 500-700  سعرة لخسارة 5-7 كغم شهرياً.<br>
+          <br>
+            - قياس الخصر والرقبة:<br>
+            <table class="table">
+                <tr>
+                    <th class="category">الذكر</th>
+                    <th class="category">الأنثى</th>
+                </tr>
+                <tr>
+                    <td>يتم أخذ أصغر مقاس للرقبة (تحت الذقن) و مقاس الوسط فوق الصرة و أكبر مقاس للمؤخرة.</td>
+                    <td>يتم أخذ أصغر مقاس للرقبة (تحت الذقن) و مقاس الوسط عند صرة البطن بالسنتيمتر.</td>
+                </tr>
+            </table>
+            <br>
+            - جدول قياس نسبة الدهون:<br>
+            <table class="table">
+                <tr>
+                    <th>الفئة</th>
+                    <th>المرأة</th>
+                    <th>الرجل</th>
+                </tr>
+                <tr>
+                    <td>دهون أساسية</td>
+                    <td>10 – 13%</td>
+                    <td>2 – 5%</td>
+                </tr>
+                <tr>
+                    <td>رياضي محترف</td>
+                    <td>14 – 20%</td>
+                    <td>6 – 13%</td>
+                </tr>
+                <tr>
+                    <td>فتنس</td>
+                    <td>21 – 24%</td>
+                    <td>14 – 17%</td>
+                </tr>
+                <tr>
+                    <td>متوسط</td>
+                    <td>25 – 31%</td>
+                    <td>18 – 24%</td>
+                </tr>
+                <tr>
+                    <td>سمين</td>
+                    <td>> 31%</td>
+                    <td>> 25%</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function calculateCalories() {
+            // الحصول على القيم من الحقول
+            let weight = parseFloat(document.getElementById('weight').value);
+            let calorieDeficit = parseFloat(document.getElementById('calorie_deficit').value) || 0; // قيمة افتراضية 0 إذا لم يتم الإدخال
+            let waist = parseFloat(document.getElementById('waist').value);
+            let neck = parseFloat(document.getElementById('neck').value);
+            let height = parseFloat(document.getElementById('height').value);
+            let hip = document.getElementById('hip').value ? parseFloat(document.getElementById('hip').value) : 0; // إذا كانت القيمة فارغة
+            let gender = document.getElementById('gender').value;
+
+            // حساب السعرات للحفاظ على الوزن
+            let maintenanceCalories = weight * 22;
+
+            // حساب محصلة السعرات بعد العجز
+            let netCalories = maintenanceCalories - calorieDeficit;
+
+            // حساب المغذيات
+            let carbs = Math.floor(netCalories / 8);
+            let proteins = Math.floor(netCalories / 13);
+            let fats = Math.floor(netCalories / 48);
+
+            // حساب نسبة الدهون في الجسم باستخدام معادلة البحرية الأمريكية
+            let bodyFatPercentage;
+            if (gender === "ذكر") {
+                bodyFatPercentage = 86.010 * Math.log10(waist - neck) - 70.041 * Math.log10(height) + 36.76;
+            } else {
+                bodyFatPercentage = 163.205 * Math.log10(waist + hip - neck) - 97.684 * Math.log10(height) - 78.387;
+            }
+
+            // تحديث النتائج في الصفحة
+            document.getElementById('maintenanceCalories').innerText = Math.floor(maintenanceCalories);
+            document.getElementById('netCalories').innerText = Math.floor(netCalories);
+            document.getElementById('carbs').innerText = carbs;
+            document.getElementById('proteins').innerText = proteins;
+            document.getElementById('fats').innerText = fats;
+            document.getElementById('bodyFatPercentage').innerText = Math.floor(bodyFatPercentage); // بدون أرقام عشرية
+        }
+
+        function toggleHipMeasurement() {
+            const gender = document.getElementById('gender').value;
+            document.getElementById('hipMeasurementContainer').style.display = gender === 'أنثى' ? 'block' : 'none';
+            // إذا كانت الأنثى، افعل العنصر الظاهر وإلا خفيه
+            if (gender === 'أنثى') {
+                document.getElementById('hip').value = '';
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('weight').value = '';
+            document.getElementById('calorie_deficit').value = '';
+            document.getElementById('waist').value = '';
+            document.getElementById('neck').value = '';
+            document.getElementById('height').value = '';
+            document.getElementById('hip').value = '';
+            document.getElementById('maintenanceCalories').innerText = '-';
+            document.getElementById('netCalories').innerText = '-';
+            document.getElementById('carbs').innerText = '-';
+            document.getElementById('proteins').innerText = '-';
+            document.getElementById('fats').innerText = '-';
+            document.getElementById('bodyFatPercentage').innerText = '-';
+        }
+    </script>
+</body>
+</html>
