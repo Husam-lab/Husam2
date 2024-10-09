@@ -93,6 +93,37 @@
             padding: 8px;
             text-align: right;
         }
+        /* جديد */
+        .collapsible {
+            cursor: pointer;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: none;
+            outline: none;
+            text-align: left;
+            font-size: 16px;
+            transition: 0.4s;
+        }
+
+        .collapsible:after {
+            content: '\25bc'; /* السهم للأسفل */
+            font-size: 13px;
+            color: black;
+            float: left;
+            margin-right: 10px;
+        }
+
+        .collapsible.active:after {
+            content: "\25b2"; /* السهم للأعلى */
+        }
+
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            color: black; /* مضمون الملاحظات والجداول باللون الأسود */
+        }
     </style>
 </head>
 <body>
@@ -141,56 +172,59 @@
             <p>نسبة الدهون في جسمك: <span id="bodyFatPercentage"></span>%</p>
         </div>
 
-        <div class="notes">
-            <u>ملاحظات:</u>
-          <br>
-            - اذا اردت نزول صحي اكتب العجز 500-700  سعرة لخسارة 5-7 كغم شهرياً.<br>
-          <br>
-            - قياس الخصر والرقبة:<br>
-            <table class="table">
-                <tr>
-                    <th class="category">الأنثى</th>
-                    <th class="category">الذكر</th>
-                </tr>
-                <tr>
-                    <td>يتم أخذ أصغر مقاس للرقبة (تحت الذقن) و مقاس الوسط فوق الصرة و أكبر مقاس للمؤخرة.</td>
-                    <td>يتم أخذ أصغر مقاس للرقبة (تحت الذقن) و مقاس الوسط عند صرة البطن بالسنتيمتر.</td>
-                </tr>
-            </table>
-            <br>
-            - جدول قياس نسبة الدهون:<br>
-            <table class="table">
-                <tr>
-                    <th>الفئة</th>
-                    <th>الأنثى</th>
-                    <th>الذكر</th>
-                </tr>
-                <tr>
-                    <td>دهون أساسية</td>
-                    <td>10 – 13%</td>
-                    <td>2 – 5%</td>
-                </tr>
-                <tr>
-                    <td>رياضي محترف</td>
-                    <td>14 – 20%</td>
-                    <td>6 – 13%</td>
-                </tr>
-                <tr>
-                    <td>فتنس</td>
-                    <td>21 – 24%</td>
-                    <td>14 – 17%</td>
-                </tr>
-                <tr>
-                    <td>متوسط</td>
-                    <td>25 – 31%</td>
-                    <td>18 – 24%</td>
-                </tr>
-                <tr>
-                    <td>سمين</td>
-                    <td>> 31%</td>
-                    <td>> 25%</td>
-                </tr>
-            </table>
+        <button type="button" class="collapsible">ملاحظات</button>
+        <div class="content">
+            <div class="notes">
+                <u>ملاحظات:</u>
+              <br>
+                - اذا اردت نزول صحي اكتب العجز 500-700  سعرة لخسارة 5-7 كغم شهرياً.<br>
+              <br>
+                - قياس الخصر والرقبة:<br>
+                <table class="table">
+                    <tr>
+                        <th class="category">الأنثى</th>
+                        <th class="category">الذكر</th>
+                    </tr>
+                    <tr>
+                        <td>يتم أخذ أصغر مقاس للرقبة (تحت الذقن) و مقاس الوسط فوق الصرة و أكبر مقاس للمؤخرة.</td>
+                        <td>يتم أخذ أصغر مقاس للرقبة (تحت الذقن) و مقاس الوسط عند صرة البطن بالسنتيمتر.</td>
+                    </tr>
+                </table>
+                <br>
+                - جدول قياس نسبة الدهون:<br>
+                <table class="table">
+                    <tr>
+                        <th>الفئة</th>
+                        <th>الأنثى</th>
+                        <th>الذكر</th>
+                    </tr>
+                    <tr>
+                        <td>دهون أساسية</td>
+                        <td>10 – 13%</td>
+                        <td>2 – 5%</td>
+                    </tr>
+                    <tr>
+                        <td>رياضي محترف</td>
+                        <td>14 – 20%</td>
+                        <td>6 – 13%</td>
+                    </tr>
+                    <tr>
+                        <td>فتنس</td>
+                        <td>21 – 24%</td>
+                        <td>14 – 17%</td>
+                    </tr>
+                    <tr>
+                        <td>متوسط</td>
+                        <td>25 – 31%</td>
+                        <td>18 – 24%</td>
+                    </tr>
+                    <tr>
+                        <td>سمين</td>
+                        <td>> 31%</td>
+                        <td>> 25%</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -256,6 +290,17 @@
             document.getElementById('fats').innerText = '-';
             document.getElementById('bodyFatPercentage').innerText = '-';
         }
+
+        // وظيفة إظهار وإخفاء الملاحظات
+        document.addEventListener('DOMContentLoaded', function () {
+            const collapsible = document.querySelector('.collapsible');
+            const content = document.querySelector('.content');
+
+            collapsible.addEventListener('click', function () {
+                this.classList.toggle('active');
+                content.style.display = content.style.display === 'block' ? 'none' : 'block';
+            });
+        });
     </script>
 </body>
 </html>
